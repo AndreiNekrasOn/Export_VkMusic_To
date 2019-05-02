@@ -5,7 +5,6 @@ from selenium.webdriver.chrome.options import Options
 import time
 import re
 import codecs
-import json
 from config import *
 
 options = Options()
@@ -15,12 +14,12 @@ options.add_experimental_option("prefs", prefs)
 
 driver = webdriver.Chrome(options=options)
 
-driver.get(url)
+driver.get(url_vk)
 
 email_input = driver.find_element_by_id("email")
-email_input.send_keys(phone)
+email_input.send_keys(vk_phone)
 password_input = driver.find_element_by_id("pass")
-password_input.send_keys(pswd)
+password_input.send_keys(vk_pswd)
 btn = driver.find_element_by_id("login_button")
 btn.click()
 
@@ -37,18 +36,14 @@ while not match:
 audios = driver.find_elements_by_css_selector(".audio_row_content")
 
 songs = []
-clear_reg = re.compile('[^a-zA-Zа-яА-Я ]')
+clear_reg = re.compile('[^a-zA-Zа-яА-Я \-]')
 for audio in audios:
         author = audio.find_element_by_css_selector(".artist_link").text.rstrip()
         song = audio.find_element_by_css_selector(".audio_row__title_inner").text.rstrip()
-        songs.append(
-            {clear_reg.sub('', author): clear_reg.sub('', song)})
+        songs.append((clear_reg.sub('', author), clear_reg.sub('', song)))
 
 driver.close()
 
-file = codecs.open("song_list.json", 'w', encoding="utf-8")
+file = codecs.open("song_list.txt", 'w', encoding="utf-8")
 for song in songs:
-    json.dump(song,
-              file,
-              ensure_ascii=False,
-              separators=(',', ': '))
+    print(song[0], song[1], sep=' - ', file=file)
