@@ -63,5 +63,5 @@ for audio in audios:
         songs.append((author, song))
 
 map(clear_reg.sub, ('', songs))
+write_songs(songs)
 driver.close()
-
